@@ -11,7 +11,7 @@ const { exec } = require('child_process');
 const { Boom } = require('@hapi/boom');
 const NodeCache = require('node-cache');
 const PhoneNumber = require('awesome-phonenumber');
-const { default: makeWASocket, useMultiFileAuthState, Browsers, DisconnectReason, makeInMemoryStore, makeCacheableSignalKeyStore, proto, getAggregateVotesInPollMessage } = require('@whiskeysockets/baileys');
+const { default: makeWASocket, useMultiFileAuthState, Browsers, DisconnectReason, makeInMemoryStore, makeCacheableSignalKeyStore, to, getAggregateVotesInPollMessage } = require('@whiskeysockets/baileys');
 
 let phoneNumber = "628895154319";
 const pairingCode = !!phoneNumber || process.argv.includes("--pairing-code");
@@ -241,6 +241,36 @@ XliconBotInc.ev.on('group-participants.update', async (update) => {
 });
 
 
+XliconBotInc.ev.on('messages.upsert', async (message) => {
+    try {
+        const msg = message.messages[0];
+        if (!msg.message || msg.key.fromMe) return;
+
+        const messageType = Object.keys(msg.message)[0];
+        if (messageType === 'protocolMessage') {
+            console.log('Received a protocolMessage. Ignoring...');
+            return;
+        }
+
+        // Tangani pesan lain seperti biasa
+        const msgContent = msg.text || msg.message.conversation || '';
+        if (msgContent) {
+            const response = await getAutoresponse(msgContent);
+            await XliconBotInc.sendMessage(msg.key.remoteJid, { text: response });
+        }
+    } catch (err) {
+        console.error('Error handling message:', err);
+    }
+});
+
+	if (messageType === 'protocolMessage') {
+    console.log('Protocol Message Details:', msg.message.protocolMessage);
+}
+
+	if (!msg.key.remoteJid || msg.key.remoteJid === 'undefined') {
+    console.log('Received a message from an undefined sender:', msg);
+    return;
+}
 
 
     // Handle messages and autoresponse
