@@ -263,14 +263,7 @@ XliconBotInc.ev.on('messages.upsert', async (message) => {
     }
 });
 
-	if (messageType === 'protocolMessage') {
-    console.log('Protocol Message Details:', msg.message.protocolMessage);
-}
 
-	if (!msg.key.remoteJid || msg.key.remoteJid === 'undefined') {
-    console.log('Received a message from an undefined sender:', msg);
-    return;
-}
 
 
     // Handle messages and autoresponse
